@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Block vs Block</title>
+        <style media="screen">
+            canvas {
+                border: 1px solid;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="id-canvas" width="375" height="600"></canvas>
+    </body>
+    <script>
+        let e = sel => document.querySelector(sel)
+        let canvas = e('#id-canvas')
+        let ctx = canvas.getContext("2d");
+        ctx.strokeStyle = "rgb(0, 0, 0, 0.5)";
+        ctx.fillStyle = "rgb(255, 0, 0, 0.57)";
+
+        let drawGround = () => {
+            let numX = 15
+            let numY = 24
+            let w = 25
+            let h = 25
+
+            for (var y = 0; y < numY; y++) {
+                for (var x = 0; x < numX; x++) {
+                    let blockX = x * w
+                    let blockY = y * h
+                    ctx.strokeRect(blockX, blockY, w, h);
+                }
+            }
+        }
+
+        let map1 = [
+            [0, 0, 0, 0],
+            [0, 1, 1, 0],
+            [0, 1, 1, 0],
+            [0, 0, 0, 0],
+        ]
+
+        let map2 = [
+            [0, 0, 0, 0],
+            [1, 1, 0, 0],
+            [0, 1, 1, 0],
+            [0, 0, 0, 0],
+        ]
+
+        let map3 = [
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
+        ]
+
+        let map4 = [
+            [0, 0, 0, 0],
+            [1, 1, 1, 1],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ]
+
+        let drawBlock = (startY, startX, map) => {
+            let w = 25
+            let h = 25
+            ctx.strokeStyle = "rgb(255, 255, 255, 1)";
+            for (var y = 0; y < map.length; y++) {
+                var line = map[y]
+                for (var x = 0; x < line.length; x++) {
+                    var block = line[x]
+                    if (block == 1) {
+                        var blockX = x * w + startX
+                        var blockY = y * h + startY
+                        ctx.fillRect(blockX + 1, blockY + 1, w - 1, h - 1);
+                        ctx.strokeRect(blockX, blockY, w, h);
+                    }
+                }
+            }
+        }
+
+        let __main = () => {
+            drawGround()
+            drawBlock(0, 0, map1)
+            window.addEventListener('keydown', function(event){
+                // self.keydowns[event.key] = true
+                console.log(event.key);
+            })
+            // drawBlock(100, 0, map2)
+            // drawBlock(180, 0, map3)
+            // drawBlock(320, 0, map4)
+        }
+
+        __main()
+    </script>
+</html>
