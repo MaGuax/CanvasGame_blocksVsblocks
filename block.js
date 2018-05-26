@@ -54,7 +54,19 @@ function makeGround() {
 }
 
 function updateGround(player) {
-
+    var map = player.map
+    var ground = bg.map
+    for (var y = 0; y < map.length; y++) {
+        var line = map[y]
+        for (var x = 0; x < line.length; x++) {
+            var b = line[x]
+            var b_indexY = player.y / player.h
+            var b_indexX = player.x /player.w
+            if (b !== -1) {
+                ground[y + b_indexY][x + b_indexX] = 2
+            }
+        }
+    }
 }
 
 const randomBtween = function(start, end) {
@@ -64,19 +76,24 @@ const randomBtween = function(start, end) {
 
 const playerMaps = {
     '1': [
-        [0, 1],
-        [0, 1],
-        [0, 1],
-        [0, 1]
+        [
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1]
+        ],
+        [
+            [-1, 1]
+        ]
     ],
     '2': [
-        [0, 1, 0],
-        [0, 1, 0],
-        [0, 1, 1]
+        [-1, 1, -1],
+        [-1, 1, -1],
+        [-1, 1, 1]
     ],
     '3': [
-        [0, 1],
-        [0, 1],
+        [-1, 1],
+        [-1, 1],
         [1, 1]
     ],
     '4': [
@@ -84,15 +101,15 @@ const playerMaps = {
         [1, 1]
     ],
     '5': [
-        [1, 1, 0],
-        [0, 1, 1]
+        [1, 1, -1],
+        [-1, 1, 1]
     ],
     '6': [
-        [0, 1, 1],
-        [1, 1, 0]
+        [-1, 1, 1],
+        [1, 1, -1]
     ],
     '7': [
-        [0, 1, 0],
+        [-1, 1, -1],
         [1, 1, 1]
     ]
 }
@@ -137,7 +154,7 @@ function collide(a, player) {
             var b = line[x]
             var b_indexY = player.y / player.h
             var b_indexX = player.x /player.w
-            if (b !== 0 && (a[y + b_indexY] && a[y + b_indexY][x + b_indexX]) !== 0) {
+            if (b == 1 && (a[y + b_indexY] && a[y + b_indexY][x + b_indexX]) !== 0) {
                 return true
             }
         }
@@ -151,10 +168,45 @@ const player = makePlayer()
 function playerDrop() {
     player.y += player.speed
     if (collide(bg.map, player)) {
-        updatePlayer()
+        player.y -= player.speed
         updateGround(player)
+        updatePlayer()
     }
     dropCounter = 0;
+}
+
+function playerMoveLeft() {
+    player.x -= player.speed
+    if (collide(bg.map, player)) {
+        player.x += player.speed
+    }
+    dropCounter = 0;
+}
+
+function playerMoveRight() {
+    player.x += player.speed
+    if (collide(bg.map, player)) {
+        player.x -= player.speed
+    }
+    dropCounter = 0;
+}
+
+function playerRotate() {
+    var a = player.map
+
+    var numX = a.length
+    var numY = a[0].length
+
+    var b = []
+    for (var y = 0; y < numY; y++) {
+        var line = []
+        for (var x = 0; x < numX; x++) {
+            line.push(a[x][y])
+        }
+        b.push(line)
+    }
+
+    player.map = b
 }
 
 function drawBlock(ele) {
@@ -162,6 +214,9 @@ function drawBlock(ele) {
         var line = ele.map[y]
         for (var x = 0; x < line.length; x++) {
             let block = String(line[x])
+            if (block == '-1') {
+                continue
+            }
             let blockX = x * ele.w + ele.x
             let blockY = y * ele.h + ele.y
             drawFill(blockX, blockY, ele.w, ele.h, block)
@@ -177,9 +232,21 @@ function draw() {
     drawBlock(player)
 }
 
-function active() {
-    playerDrop()
+function bindAction() {
+    document.addEventListener('keydown', function(e) {
+        var key = e.key
+        if (key == 'a') {
+            playerMoveLeft()
+        } else if (key == 'd') {
+            playerMoveRight()
+        } else if (key == 's') {
+            playerDrop()
+        } else if (key == ' ') {
+            playerRotate()
+        }
+    })
 }
+
 
 let dropCounter = 0;
 let dropInterval = 1000;
@@ -202,10 +269,12 @@ function updateGame(time = 0) {
 //
 function startGame() {
     // draw()
+    bindAction()
     updateGame()
 }
 
 startGame()
+
 
 
 
