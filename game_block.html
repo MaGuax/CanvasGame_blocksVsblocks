@@ -10,7 +10,24 @@
         }
     </style>
     <body>
-        <canvas id="id-canvas" width="400" height="700"></canvas>
+        <canvas id="id-canvas" width="800" height="800"></canvas>
     </body>
-    <script src="block.js"></script>
+    <script src="utils.js"></script>
+    <script src="config.js"></script>
+    <script src="player.js"></script>
+    <script src="ground.js"></script>
+    <script src="game.js"></script>
+    <script src="scene_play.js"></script>
+    <script>
+        const __main = () => {
+            var game = new Game(function(g) {
+                var s = new Scene(game)
+                g.runWithScene(s)
+            })
+
+            game.run()
+        }
+
+        __main()
+    </script>
 </html>
